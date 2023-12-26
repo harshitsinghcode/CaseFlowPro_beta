@@ -47,7 +47,7 @@ This is a Next.js project bootstrapped with create-next-app.
 
 4. [SamShervinS 👨‍💻](https://github.com/sam-shervin)
 
-5. Anvesha Singh 👩‍💻
+5. [Anvesha Singh 👩‍💻](https://github.com/anvesha-singh)
 
 6. [SaiKumar 👨‍💻](https://github.com/HarbingerOfTheEnd/smart-india-hackathon)
 
