@@ -1,4 +1,4 @@
-## CaseFlowPro_beta 💼
+# CaseFlowPro_beta 💼
 - CaseFlowPro is an innovative platform developed by Team Chordians, aimed at revolutionizing India's legal system. This project addresses the challenges faced by the judicial system through Differentiated Case Flow Management (DCM), ensuring tailored attention to each legal case.
 
 ## Features 🚀
