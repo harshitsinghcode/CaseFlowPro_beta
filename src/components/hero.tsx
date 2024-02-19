@@ -43,6 +43,8 @@ export default function HeroComponent(): JSX.Element {
           <AiFillCaretDown />
         </a>
       </section>
+      <iframe src="https://hershiestech.h5p.com/content/1292197727396645047/embed" aria-label="layoffs" width="1088" height="637" frameborder="0" allowfullscreen="allowfullscreen" allow="autoplay *; geolocation *; microphone *; camera *; midi *; encrypted-media *"></iframe>
+      <script src="https://hershiestech.h5p.com/js/h5p-resizer.js" charset="UTF-8"></script>
     </>
   );
 }
