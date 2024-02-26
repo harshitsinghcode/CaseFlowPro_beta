@@ -1,5 +1,5 @@
+import React, { useEffect, useState, useRef } from 'react';
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { AiOutlineGoogle } from 'react-icons/ai';
 import { FaReact } from 'react-icons/fa';
 import { SiPostgresql, SiTailwindcss, SiSupabase } from "react-icons/si";
@@ -8,100 +8,87 @@ import { TbBrandNextjs } from 'react-icons/tb';
 export default function TechStackComponent(): JSX.Element {
   const { theme, setTheme } = useTheme();
   const [background, setBackground] = useState("");
+  const iframeRef = useRef(null);
+
   useEffect(() => {
     if (theme === "light") {
-      // setBackground("bg-zinc-950 text-white");
-      setBackground("bg-slate-50 text-black");
-    }
-
-    if (theme === "dark" || theme === "system") {
-      // setBackground("bg-slate-50 text-black");s
+      setBackground("bg-zinc-950 text-white");
+    } else if (theme === "dark" || theme === "system") {
       setBackground("bg-zinc-950 text-white");
     }
   }, [theme]);
 
+  useEffect(() => {
+    if (iframeRef.current) {
+      // Add an event listener to capture XAPI statements
+      iframeRef.current.contentWindow.addEventListener('message', (event) => {
+        if (event.origin !== 'https://h5p.ipropel.co.in') {
+          console.warn("Message received from unknown origin:", event.origin);
+          return;
+        }
+
+        try {
+          const xapiStatement = JSON.parse(event.data);
+          console.log('xAPI Statement:', xapiStatement);
+
+          // Log the intercepted data
+          console.log('Intercepted data:', xapiStatement);
+
+          // Send the intercepted data to the middleware
+          sendDataToMiddleware(xapiStatement);
+        } catch (error) {
+          console.error('Error parsing xAPI statement:', error);
+        }
+      });
+
+      // Check if H5P externalDispatcher exists (optional, for more control)
+      const h5pWindow = iframeRef.current.contentWindow;
+      if (h5pWindow.H5P && h5pWindow.H5P.externalDispatcher) {
+        h5pWindow.H5P.externalDispatcher.on('xAPI', (event) => {
+          // Handle XAPI events from H5P externalDispatcher
+          console.log('H5P externalDispatcher xAPI event:', event);
+        });
+      } else {
+        console.warn('H5P externalDispatcher not found in iframe');
+      }
+    }
+  }, []);
+
+  // Function to send intercepted data to the middleware
+  const sendDataToMiddleware = (data) => {
+    // Modify the data if needed (e.g., add additional fields)
+    const modifiedData = { ...data, additionalField: 'value' };
+    console.log('sending data to middleware:', modifiedData);
+
+    // Send the data to the middleware using fetch
+    fetch('http://localhost:6700/api/processData', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(modifiedData),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to send data to middleware: ${response.statusText}`);
+      }
+      console.log('Data sent to middleware successfully');
+    })
+    .catch(error => {
+      console.error('Error sending data to middleware:', error);
+    });
+  };
+
   return (
-    <main className={"min-h-screen flex flex-col items-center justify-center " + background} id="TechStack">
-      <section className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
-        <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-          Tech Stack
-        </h2>
-        <p className="max-w-[85%] leading-normal text-xl py-2">
-          This project is made using with Next.js, Typescript, TailwindCSS, React, Prisma and Supabase (PostgreSQL)! To implement
-          our solution serverless, we use <em>Supabase</em>.
-        </p>
-      </section>
-      <section className="py-4 mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <TbBrandNextjs className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">Next.js 13</h3>
-              <p className="text-sm">
-                Pages directory, Routing, Layouts.
-              </p>
-            </section>
-          </section>
-        </section>
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <FaReact className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">React 18</h3>
-              <p className="text-sm">Server and Client Components. Use hook.</p>
-            </section>
-          </section>
-        </section>
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <SiPostgresql className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">Database</h3>
-              <p className="text-sm ">
-                Developed using PostgreSQL
-              </p>
-            </section>
-          </section>
-        </section>
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <SiTailwindcss className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">Components</h3>
-              <p className="text-sm ">
-                Styled using Tailwind
-              </p>
-            </section>
-          </section>
-        </section>
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <AiOutlineGoogle className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">Authentication</h3>
-              <p className="text-sm ">
-                We support Google Authentication as well!
-              </p>
-            </section>
-          </section>
-        </section>
-        <section className="relative overflow-hidden rounded-lg border bg-background p-2">
-          <section className="flex h-[180px] flex-col justify-between rounded-md p-6">
-            <SiSupabase className='text-4xl' />
-            <section className="space-y-2">
-              <h3 className="font-bold">Supabase</h3>
-              <p className="text-sm ">
-                Allows us to implement Auth, Storage and Blob serverlessly!
-              </p>
-            </section>
-          </section>
-        </section>
-      </section>
-      <section className="py-4 first-letter:mx-auto text-center md:max-w-[58rem]">
-        <p className="leading-normal py-2 sm:text-lg sm:leading-7">
-          This website was designed by Harshit, Sinchan, Anvesha, Visnu, Sam, and Sai Kumar!
-        </p>
-      </section>
-    </main>
+    <iframe
+        ref={iframeRef}
+        src="https://h5p.ipropel.co.in/h5p/play/1036673971"
+        aria-label="layoffs"
+        width="1088"
+        height="637"
+        frameBorder="0"
+        allowFullScreen={false}
+        allow="autoplay *; geolocation *; microphone *; camera *; midi *; encrypted-media *"
+      ></iframe>
+      
   );
 }
+{/* <iframe src="https://hershiestech.h5p.com/content/1292197727396645047/embed" aria-label="layoffs" width="1088" height="637" frameborder="0" allowfullscreen="allowfullscreen" allow="autoplay *; geolocation *; microphone *; camera *; midi *; encrypted-media *"></iframe><script src="https://hershiestech.h5p.com/js/h5p-resizer.js" charset="UTF-8"></script> */}
